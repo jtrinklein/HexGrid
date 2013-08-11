@@ -1,4 +1,4 @@
-define(['hexgrid', 'constants', 'ai/tictactoecpu', 'render/texture/animation'],function(HexGrid, constants, AI, Animation){
+define(['hexgrid', 'constants', 'ai/tictactoecpu', 'render/texture/animation', 'player'],function(HexGrid, constants, AI, Animation, Player){
 
   function TicTacHex(canvas){
     var self = this;
@@ -8,6 +8,7 @@ define(['hexgrid', 'constants', 'ai/tictactoecpu', 'render/texture/animation'],f
     this.ai = new AI();
     this.markers = constants.markers;
     this.win = [-1,-1,-1];
+    this.player = new Player(self, constants.markers.p1, [0,0,1,1]);
 
     function checkWin(board) {
       function checkRowWin() {
@@ -81,7 +82,7 @@ define(['hexgrid', 'constants', 'ai/tictactoecpu', 'render/texture/animation'],f
       }
       if(animation) {
         for(var i = 0; i < self.win.length; ++i) {
-          var hex = getHexFromIndex(self.win[i]);
+          var hex = self.getHexFromIndex(self.win[i]);
           if(hex) {
             hex.animation = new Animation.TextureAnimation(animation);
           }
@@ -89,30 +90,20 @@ define(['hexgrid', 'constants', 'ai/tictactoecpu', 'render/texture/animation'],f
       }
     }
 
-    function getHexFromIndex(index){
-      switch(index) {
-        case 0:
-          return self.hexGrid.find(0,0);
-        case 1:
-          return self.hexGrid.find(1,0);
-        case 2:
-          return self.hexGrid.find(2,0);
-        case 3:
-          return self.hexGrid.find(0,1);
-        case 4:
-          return self.hexGrid.find(1,1);
-        case 5:
-          return self.hexGrid.find(2,1);
-        case 6:
-          return self.hexGrid.find(0,2);
-        case 7:
-          return self.hexGrid.find(1,2);
-        case 8:
-          return self.hexGrid.find(2,2);
-        default:
-          return null;
+    this.getHexFromIndex = function(index){
+      if(index < 0) {
+        return null;
       }
+      var column = index % 3;
+      var row = Math.floor(index / 3);
+
+      return self.hexGrid.find(column,row);
     }
+
+    this.getIndexFromHex = function(hex) {
+      return hex.q + hex.r*3;
+    }
+
     this.loop = function(){
       self.hexGrid.update();
       self.hexGrid.renderOneFrame();
@@ -121,21 +112,17 @@ define(['hexgrid', 'constants', 'ai/tictactoecpu', 'render/texture/animation'],f
 
     canvas.onmousedown = function(e) {
       var hex = self.hexGrid.findByPixel(e.offsetX, e.offsetY);
-        
-      if(hex && !self.gameOver) {
+      var idx = self.getIndexFromHex(hex);
+      if(hex && !self.gameOver && self.board[idx] === self.markers.empty) {
 
-        var col = hex.q;
-        var row = hex.r;
-
-        self.board[col + row * 3] = self.markers.p1;
-        hex.color = [0,0,1,1];
+        self.player.move(hex);
         if(checkWin(self.board) === self.markers.p1) {
           gameWon(self.markers.p1);
           return;
         }
 
         var move = self.ai.move(self.board);
-        var hex = getHexFromIndex(move);
+        var hex = self.getHexFromIndex(move);
         if(hex) {
           hex.color = [1,0,0,1];
         }

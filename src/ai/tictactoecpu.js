@@ -6,7 +6,8 @@ define(['constants'],function(constants){
       win: 0,
       strategic: 1,
       random: 2,
-      impossible: 4
+      block: 3,
+      impossible: 9
     };
 
     function isWinMove(board, index) {
@@ -64,6 +65,32 @@ define(['constants'],function(constants){
       return isRowWin() || isColumnWin() || isDiagonalWin();
     }
 
+    function isBlockMove(board, index) {
+    
+      var column = index % 3;
+      var row = Math.floor(index / 3);
+
+      if(board[(column + 1) % 3 + row * 3] === markers.p1 && board[(column + 2) % 3 + row * 3] === markers.p1) {
+        return true;
+      }
+      if(board[column + ((row + 1) % 3) * 3] === markers.p1 && board[column + ((row + 2) % 3) * 3] === markers.p1) {
+        return true;
+      }
+
+      if([2,4,6].indexOf(index) >= 0
+        && board[((column + 5) % 3 + ((row + 1) % 3) * 3) % 9] === markers.p1 
+        && board[((column + 4) % 3 + ((row + 2) % 3) * 3) % 9] === markers.p1){
+        return true;
+      }
+
+      if([0,4,8].indexOf(index) >= 0
+        && board[((column + 1) % 3 + ((row + 1) % 3) * 3) % 9] === markers.p1 
+        && board[((column + 2) % 3 + ((row + 2) % 3) * 3) % 9] === markers.p1){
+        return true;
+      }
+
+      return false;
+    }
     function createsWinMove(board, index) {
       function createsRowWin() {
         var column = index % 3;
@@ -131,6 +158,10 @@ define(['constants'],function(constants){
         else if(isWinMove(board, i)){
           moves[i] = rank.win;
         }
+
+        else if(isBlockMove(board, i)){
+          moves[i] = rank.block;
+        }
         
         else if(createsWinMove(board, i)) {
           moves[i] = rank.strategic;
@@ -146,6 +177,12 @@ define(['constants'],function(constants){
     this.move = function(board, doNotTakeRandomMove){
       var moves = rankMoves(board);
       var move = moves.indexOf(rank.win);
+      if(move > -1) {
+        board[move] = myMarker;
+        return move;
+      }
+
+      move = moves.indexOf(rank.block);
       if(move > -1) {
         board[move] = myMarker;
         return move;
