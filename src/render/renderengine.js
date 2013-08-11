@@ -15,7 +15,7 @@ function(matrix, Camera, Shaders, Texture, textureLibrary){
     var frameTime = 0;
     var lastTimestamp = 0;
     var textureMap = {};
-    var textureFiles = ['img/test.png','img/morepie.gif','img/ninja.gif','img/water.gif'];
+    var textureFiles = ['img/water.gif','img/lava.gif'];//,'img/morepie.gif','img/ninja.gif','img/water.gif'];
     var texturesToLoad = textureFiles.length;
 
     function getShader(src, type) {
@@ -269,8 +269,7 @@ function(matrix, Camera, Shaders, Texture, textureLibrary){
     }
 
     function drawHexes(hexes) {
-      // do not render until textures are loaded
-      if(!ready) return;
+      
 
       preRender();
 
@@ -280,7 +279,8 @@ function(matrix, Camera, Shaders, Texture, textureLibrary){
           var y = hex.height() * hex.r * 3 / 4.0;
           
           var texture = null;
-          if(hex.animation) {
+          // do not render with textures until textures are loaded
+          if(hex.animation && ready) {
             hex.animation.update(frameTime);
             texture = hex.animation.getFrame();
           }

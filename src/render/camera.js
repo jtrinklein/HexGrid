@@ -2,9 +2,9 @@ define(['render/glMatrix-0.9.5.min'],function(matrix){
 	function HexCamera(glContext) {
 		var gl = glContext;
 		var fieldOfView = 90;
-		var cam_x = 47;
+		var cam_x = 22;
 		var cam_y = 12;
-		var cam_z = 50;
+		var cam_z = 60;
 		var degree = -30.0;
 
 		function getViewMatrix() {
