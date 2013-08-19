@@ -20,16 +20,24 @@ Features
 Controls
 ========
 
-Modes:
-`L` --> Draw Line
-`O` --> Obstacle
-`R` --> Ring (Single)
-`I` --> Intersecting Range
+####Modes:
 
-:arrow_up: :arrow_down: :arrow_left: :arrow_right: --> Move camera
+`L` - Draw Line
 
-Mousewheel Up/Down --> Zoom in/out
+`O` - Obstacle
 
-`S`/`X` --> Adjust the angle of the grid
+`R` - Ring (Single)
 
-`Mouse Click` --> Select a hex
+`I` - Intersecting Range
+
+:arrow_up: :arrow_down: :arrow_left: :arrow_right: - Move camera
+
+`Mousewheel Up/Down` - Zoom in/out
+
+`S`/`X` - Adjust the angle of the grid
+
+`Mouse Click` - Select a hex
+
+`w` - Set all hexes to water animation
+
+`e` - Clear animation from all hexes
